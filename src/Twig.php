@@ -1,5 +1,29 @@
 <?php
 /**
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Bitmade
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
  * Calculate the relative path from the template directory to the actual template file.
  *
  * Twig uses a root directory and all includes are based upon that directory.
@@ -30,24 +54,6 @@ function _getFilepathPrefix($rootDir, $fileDir) {
 }
 
 /**
- * Invokes all given "extensions".
- *
- * An extension basically is just a file containing a function that gets passed the current
- * Twig environment as a reference.
- *
- * @param array $extensions
- *    The $extensions parameter contains a list of maps that contain a file and a func property.
- * @param \Twig_Environment $twig
- */
-function _invokeExtensions(array $extensions, \Twig_Environment &$twig) {
-  // Require all files specified as Twig extensions.
-  foreach ($extensions as $extension) {
-    require_once $extension['file'];
-    $extension['func']($twig);
-  }
-}
-
-/**
  * Renders a Twig template.
  *
  * @param string $entry
@@ -61,26 +67,28 @@ function render($entry, $options = array()) {
   $fileInfo = pathinfo($entry);
 
   $options = array_merge(array(
-    'extensions' => array(),
     'aliases' => array(),
     'context' => array(),
+    'staticRoot' => ''
   ), $options);
 
   // Get the root template directory either from the given file or specified in the options.
-  $rootDir = array_key_exists('root', $options) && $options['root']
-    ? $options['root'] : $fileInfo['dirname'];
+  $isRootOption = array_key_exists('root', $options) && $options['root'];
+  $rootDir = $isRootOption ? $options['root'] : $fileInfo['dirname'];
 
   $prefix = _getFilepathPrefix($rootDir, $fileInfo['dirname']);
+  $staticRoot = $options['staticRoot'];
 
   $loader = new Twig_Loader_Chain(array(
     new Alias_Loader($options['aliases']),
     new Twig_Loader_Filesystem($rootDir),
   ));
 
-  // @todo Provide a mechanism to allow custom Twig extensions either via PHP or better JS.
   $twig = new Twig_Environment($loader);
 
-  _invokeExtensions($options['extensions'] ?: array(), $twig);
+  $twig->addFunction(new Twig_SimpleFunction('static', function ($path) use($staticRoot) {
+    return rtrim($staticRoot, '/') . '/' . ltrim($path, '/');
+  }));
 
   try {
     return $twig->render($prefix . $fileInfo['basename'], $options['context']);
