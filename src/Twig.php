@@ -54,6 +54,21 @@ function _getFilepathPrefix($rootDir, $fileDir) {
 }
 
 /**
+ * Invokes all given "extensions".
+ *
+ *
+ * @param array $extensions
+ *    The $extensions parameter contains a list extensions to add.
+ * @param \Twig_Environment $twig
+ */
+function _invokeExtensions(array $extensions, \Twig_Environment &$twig) {
+  // Require all files specified as Twig extensions.
+  foreach ($extensions as $extension) {
+    $twig->addExtension(new $extension());
+  }
+}
+
+/**
  * Renders a Twig template.
  *
  * @param string $entry
@@ -85,7 +100,9 @@ function render($entry, $options = array()) {
   ));
 
   $twig = new Twig_Environment($loader);
-
+  
+  _invokeExtensions($options['extensions'] ?: array(), $twig);
+  
   $twig->addFunction(new Twig_SimpleFunction('static', function ($path) use($staticRoot) {
     return rtrim($staticRoot, '/') . '/' . ltrim($path, '/');
   }));
