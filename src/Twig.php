@@ -81,10 +81,16 @@ function _invokeExtensions(array $extensions, \Twig_Environment &$twig) {
 function render($entry, $options = array()) {
   $fileInfo = pathinfo($entry);
 
+  $extensions = array();
+  if (class_exists('Frctl\TwigExtensions')) {
+      $extensions = Frctl\TwigExtensions::getExtensions();
+  }
+
   $options = array_merge(array(
     'aliases' => array(),
     'context' => array(),
-    'staticRoot' => ''
+    'staticRoot' => '',
+    'extensions' => $extensions,
   ), $options);
 
   // Get the root template directory either from the given file or specified in the options.
