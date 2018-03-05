@@ -29,7 +29,7 @@ class Alias_Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
         if (!is_array($aliases)) return;
 
         foreach ($aliases as $handle => $path) {
-            if(ctype_digit($handle)) continue;
+            if (ctype_digit($handle)) continue;
             $this->aliases[$handle] = $path;
         }
     }
@@ -68,6 +68,6 @@ class Alias_Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
         }
 
         return false;
-        
+
     }
 }
