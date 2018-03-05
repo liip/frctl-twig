@@ -68,6 +68,7 @@ class Twig
         ));
 
         $twig = new \Twig_Environment($loader, array('debug' => true));
+        $twig->addExtension(new \Twig_Extension_Debug());
 
         $extensions = array();
         if (class_exists('Frctl\TwigExtensions')) {

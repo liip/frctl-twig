@@ -1,0 +1,25 @@
+{
+  "name": "frctl-twig",
+  "version": "0.1.0",
+  "description": "Fractals twig adapter inspired by node-twig",
+  "author": "Lukas Kahwe Smith",
+  "keywords": [
+    "twig",
+    "fractal",
+    "render",
+    "templating"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liip/frctl-twig"
+  },
+  "dependencies": {
+    "colors": "^1.1.2",
+    "exec-php": "0.0.3",
+    "trim": "0.0.1",
+    "lodash": "^4.0.0",
+    "@frctl/fractal": "^1.0.0-rc.1"
+  },
+  "main": "adapter.js"
+}
