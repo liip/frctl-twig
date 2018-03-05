@@ -99,10 +99,10 @@ function render($entry, $options = array()) {
     new Twig_Loader_Filesystem($rootDir),
   ));
 
-  $twig = new Twig_Environment($loader);
-  
+  $twig = new Twig_Environment($loader, array('debug' => true));
+
   _invokeExtensions($options['extensions'] ?: array(), $twig);
-  
+
   $twig->addFunction(new Twig_SimpleFunction('static', function ($path) use($staticRoot) {
     return rtrim($staticRoot, '/') . '/' . ltrim($path, '/');
   }));
