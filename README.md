@@ -65,6 +65,37 @@ Then add the following section to your fractal project composer.json:
 
 Add the composer package pointing to your fractal project into the composer project of this other project.
 
+Adjust the file loader to be able to find the twig templates in the fractal project:
+
+```
+class TwigFilesystemLoader extends BaseTwigFilesystemLoader
+{
+    /**
+     * Should probably be set via a setter from configuration
+     *
+     * @var string
+     */
+    private $fractalPath = '/path/to/fractal/twig/templates';
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function findTemplate($name)
+    {
+        $fractalPath = $this->getFractalPath();
+        if ($fractalPath && preg_match('/^@fractal-(.*)$/', $name, $templatePath)) {
+            $fullFilePath = $fractalPath . '/' . $templatePath[1];
+
+            return $fullFilePath;
+        }
+
+        ..
+    }
+}
+```
+
 Load all the extensions into your `Twig_Environment` instance:
 
 ```
