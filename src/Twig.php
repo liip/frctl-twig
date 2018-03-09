@@ -97,7 +97,7 @@ class Twig
      *
      * @return string
      */
-    private static function _createPrettyError($message = '') {
+    private static function createPrettyError($message = '') {
         return <<<EOT
 <html>
   <head>
