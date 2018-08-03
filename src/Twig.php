@@ -67,7 +67,11 @@ class Twig
             new \Twig_Loader_Filesystem($rootDir),
         ));
 
-        $twig = new \Twig_Environment($loader, array('debug' => true));
+        $twig = new \Twig_Environment($loader, array(
+            'debug' => isset($options['debug']) ? $options['debug'] : true,
+            'strict_variables' => isset($options['strict_variables']) ? $options['strict_variables'] : false,
+        ));
+
         $twig->addExtension(new \Twig_Extension_Debug());
 
         $extensions = array();

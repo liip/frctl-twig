@@ -1,14 +1,14 @@
 const execPHP = require('exec-php');
 const trim = require('trim');
 
-const twigOptions = {
+var twigDefaultOptions = {
   root: null,
   context: {}
 };
 
 exports.renderFile = function (entry, options, cb) {
   // Merge the global options with the local ones.
-  options = Object.assign({}, twigOptions, options);
+  options = Object.assign({}, twigDefaultOptions, options);
 
   execPHP('engine.php', null, function (error, php) {
     // Call the callback on error or the render function on success.
@@ -21,7 +21,7 @@ exports.renderFile = function (entry, options, cb) {
 
 exports.createEngine = function (options) {
   // Merge the options with default options.
-  twigOptions = Object.assign(twigOptions, options);
+  twigDefaultOptions = Object.assign(twigDefaultOptions, options);
 
   return exports.renderFile;
 };
