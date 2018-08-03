@@ -7,9 +7,15 @@ const utils      = require('@frctl/fractal').utils;
 
 class TwigAdapter extends Adapter {
 
-  constructor(source, app) {
+  constructor(source, app, twigOptions) {
     super(null, source);
     this._app = app;
+
+    if (typeof twigOptions === 'undefined') {
+      twigOptions = {};
+    }
+
+    this._twigOptions = twigOptions;
   }
 
   render(path, str, context, meta) {
@@ -26,7 +32,7 @@ class TwigAdapter extends Adapter {
       partials[view.handle] = view.path;
     });
 
-    const options = {
+    var options = {
       context: context,
       aliases: partials,
       root: this._source.fullPath,
@@ -39,8 +45,10 @@ class TwigAdapter extends Adapter {
           ).replace('/file', '/')
     };
 
+    var mergedOptions = Object.assign({}, this._twigOptions, options);
+
     return new Promise(function (res, rej) {
-      twig(path, options, function (err, html) {
+      twig(path, mergedOptions, function (err, html) {
         err ? rej(err) : res(html);
       });
     });
@@ -54,11 +62,11 @@ function setEnv(key, value, context) {
   }
 }
 
-module.exports = function () {
+module.exports = function (twigOptions) {
 
   return {
     register(source, app) {
-      return new TwigAdapter(source, app);
+      return new TwigAdapter(source, app, twigOptions);
     }
   }
 

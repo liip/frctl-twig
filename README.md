@@ -91,7 +91,7 @@ class TwigFilesystemLoader extends BaseTwigFilesystemLoader
             return $fullFilePath;
         }
 
-        ..
+        ...
     }
 }
 ```
@@ -105,6 +105,23 @@ Load all the extensions into your `Twig_Environment` instance:
             $twig->addExtension($extension);
         }
     }
+```
+
+# `strict_variables` and `debug` config flags
+
+By default, the `strict_variables` flag of twig is set to `false` and the `debug` flag is set to true. 
+To change these variables, pass them in an optional config object with their desired values while configuring 
+fractal:
+
+```
+    const frctlTwig = require("frctl-twig");
+    
+    fractal.components.engine(frctlTwig({
+        strict_variables: true, // Or false
+        debug: false // Or true
+    }));
+    
+    // Further setup...
 ```
 
 # Credits
