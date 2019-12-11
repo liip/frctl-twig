@@ -29,7 +29,7 @@ Run `npm install`.
 
 Add any relevant composer packages to your composer.json.
 
-For exampe run `composer require twig/twig-extensions`.
+For example run `composer require twig/twig-extensions`.
 
 Then add a file `php-twig/TwigExtensions.php` to your fractal project with the following content:
 
@@ -107,9 +107,9 @@ Load all the extensions into your `Twig_Environment` instance:
     }
 ```
 
-# `strict_variables` and `debug` config flags
+# Configuration options
 
-By default, the `strict_variables` flag of twig is set to `false` and the `debug` flag is set to true. 
+By default, the `strict_variables` flag of twig is set to `false`, the `debug` flag is set to `true` and the `autoescape` flag is set to `true`.
 To change these variables, pass them in an optional config object with their desired values while configuring 
 fractal:
 
@@ -118,11 +118,44 @@ fractal:
     
     fractal.components.engine(frctlTwig({
         strict_variables: true, // Or false
-        debug: false // Or true
+        debug: false, // Or true
+        autoescape: false, // Or true
     }));
     
     // Further setup...
 ```
+
+## Twig namespaces
+
+You can also register Twig namespaces in the following way:
+
+```
+    const frctlTwig = require('frctl-twig');
+
+    fractal.components.engine(frctlTwig({
+        namespaces: {
+            atoms: {
+                paths: ['00-atoms']
+            },
+            molecules: {
+                paths: ['01-molecules']
+            },
+            organisms: {
+                paths: ['02-organisms']
+            },
+            templates: {
+                paths: ['03-templates']
+            },
+            pages: {
+                paths: ['04-pages']
+            }
+        }
+    }));
+
+    // Further setup...
+```
+
+The above example creates five namespaces named after the stages of atomic design. The paths are always relative paths from the Fractal components root directory.
 
 # Credits
 
