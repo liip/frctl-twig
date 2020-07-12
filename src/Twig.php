@@ -4,7 +4,7 @@ namespace Frctl;
 
 class Twig
 {
-    /*
+    /**
      * Calculate the relative path from the template directory to the actual template file.
      *
      * Twig uses a root directory and all includes are based upon that directory.
@@ -62,14 +62,28 @@ class Twig
         $prefix = self::getFilepathPrefix($rootDir, $fileInfo['dirname']);
         $staticRoot = $options['staticRoot'];
 
+        $fsLoader = new \Twig_Loader_Filesystem($rootDir);
+
+        // Add namespaces if they are specified in the options.
+        if (isset($options['namespaces']) && is_array($options['namespaces'])) {
+          foreach ($options['namespaces'] as $namespace => $item) {
+            if (isset($item['paths']) && is_array($item['paths'])) {
+              foreach ($item['paths'] as $path) {
+                $fsLoader->addPath($rootDir . '/' . $path, $namespace);
+              }
+            }
+          }
+        }
+
         $loader = new \Twig_Loader_Chain(array(
             new Loader($options['aliases']),
-            new \Twig_Loader_Filesystem($rootDir),
+            $fsLoader,
         ));
 
         $twig = new \Twig_Environment($loader, array(
             'debug' => isset($options['debug']) ? $options['debug'] : true,
             'strict_variables' => isset($options['strict_variables']) ? $options['strict_variables'] : false,
+            'autoescape' => isset($options['autoescape']) ? $options['autoescape'] : true
         ));
 
         $twig->addExtension(new \Twig_Extension_Debug());
